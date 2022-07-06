@@ -37,7 +37,7 @@ def build_dataset(dataset_opt):
     return dataset
 
 
-def build_dataloader(dataset, dataset_opt, num_gpu=1, dist=False, sampler=None, seed=None):
+def build_dataloader(opt, dataset, dataset_opt, num_gpu=1, dist=False, sampler=None, seed=None):
     """Build dataloader.
 
     Args:

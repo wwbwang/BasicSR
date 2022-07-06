@@ -1,15 +1,18 @@
 from os import path as osp
 from PIL import Image
+import os
 
 from basicsr.utils import scandir
 
+# generate a  txt file which records information of LR & HR datasets for training
+# TODO LR TIFF is 16bit, while HR TIFF is 8bit. (not sure)
 
 def generate_meta_info_div2k():
     """Generate meta info for DIV2K dataset.
     """
 
-    gt_folder = 'datasets/DIV2K/DIV2K_train_HR_sub/'
-    meta_info_txt = 'basicsr/data/meta_info/meta_info_DIV2K800sub_GT.txt'
+    gt_folder = '../../datasets/BioSR/F-actin/F-actin_output/subtestHR/'
+    meta_info_txt = '../../basicsr/data/meta_info/001_MSRResNet_x2_f64b16_DIV2K_1000k_B16G1_wandb.txt'
 
     img_list = sorted(list(scandir(gt_folder)))
 
@@ -22,6 +25,9 @@ def generate_meta_info_div2k():
                 n_channel = 3
             elif mode == 'L':
                 n_channel = 1
+            # 16bit TIFF
+            elif mode == 'I;16':
+                n_channel = 1
             else:
                 raise ValueError(f'Unsupported mode {mode}.')
 
@@ -31,4 +37,5 @@ def generate_meta_info_div2k():
 
 
 if __name__ == '__main__':
+    os.chdir(os.path.dirname(__file__))
     generate_meta_info_div2k()

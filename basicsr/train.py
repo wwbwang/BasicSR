@@ -2,7 +2,11 @@ import datetime
 import logging
 import math
 import time
+
+from regex import P
 import torch
+
+import os
 from os import path as osp
 
 from basicsr.data import build_dataloader, build_dataset
@@ -35,6 +39,7 @@ def create_train_val_dataloader(opt, logger):
             train_set = build_dataset(dataset_opt)
             train_sampler = EnlargedSampler(train_set, opt['world_size'], opt['rank'], dataset_enlarge_ratio)
             train_loader = build_dataloader(
+                opt,
                 train_set,
                 dataset_opt,
                 num_gpu=opt['num_gpu'],
@@ -212,4 +217,5 @@ def train_pipeline(root_path):
 
 if __name__ == '__main__':
     root_path = osp.abspath(osp.join(__file__, osp.pardir, osp.pardir))
+    os.chdir(root_path)
     train_pipeline(root_path)

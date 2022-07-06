@@ -1,5 +1,6 @@
 from torch.utils import data as data
 from torchvision.transforms.functional import normalize
+import numpy as np
 
 from basicsr.data.data_util import paired_paths_from_folder, paired_paths_from_lmdb, paired_paths_from_meta_info_file
 from basicsr.data.transforms import augment, paired_random_crop
@@ -67,15 +68,22 @@ class PairedImageDataset(data.Dataset):
             self.file_client = FileClient(self.io_backend_opt.pop('type'), **self.io_backend_opt)
 
         scale = self.opt['scale']
+        flag = self.opt['datatype_flag']
+        if(self.opt['datatype'] == 'uint8'):
+            datatype = np.uint8
+        elif(self.opt['datatype'] == 'uint16'):
+            datatype = np.uint16
+        else:
+            raise KeyError(f"unsupported datatype")
 
         # Load gt and lq images. Dimension order: HWC; channel order: BGR;
         # image range: [0, 1], float32.
         gt_path = self.paths[index]['gt_path']
         img_bytes = self.file_client.get(gt_path, 'gt')
-        img_gt = imfrombytes(img_bytes, float32=True)
+        img_gt = imfrombytes(img_bytes, flag, datatype, float32=True)
         lq_path = self.paths[index]['lq_path']
         img_bytes = self.file_client.get(lq_path, 'lq')
-        img_lq = imfrombytes(img_bytes, float32=True)
+        img_lq = imfrombytes(img_bytes, flag, datatype, float32=True)
 
         # augmentation for training
         if self.opt['phase'] == 'train':

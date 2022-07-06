@@ -73,7 +73,7 @@ def get_dist_info():
 
 def master_only(func):
 
-    @functools.wraps(func)
+    @functools.wraps(func)      #add this annotation to keep properties of called function
     def wrapper(*args, **kwargs):
         rank, _ = get_dist_info()
         if rank == 0:

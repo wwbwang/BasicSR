@@ -192,7 +192,7 @@ class BaseModel():
     def get_current_learning_rate(self):
         return [param_group['lr'] for param_group in self.optimizers[0].param_groups]
 
-    @master_only
+    @master_only        ## save as run "save_network = master_only(save_network)"
     def save_network(self, net, net_label, current_iter, param_key='params'):
         """Save networks.
 
@@ -226,6 +226,7 @@ class BaseModel():
         retry = 3
         while retry > 0:
             try:
+                # save only parameter of the model
                 torch.save(save_dict, save_path)
             except Exception as e:
                 logger = get_root_logger()

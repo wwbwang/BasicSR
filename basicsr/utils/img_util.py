@@ -111,7 +111,7 @@ def tensor2img_fast(tensor, rgb2bgr=True, min_max=(0, 1)):
     return output
 
 
-def imfrombytes(content, flag='color', float32=False):
+def imfrombytes(content, flag='color', datatype = np.uint8, float32=False):
     """Read an image from bytes.
 
     Args:
@@ -124,12 +124,20 @@ def imfrombytes(content, flag='color', float32=False):
     Returns:
         ndarray: Loaded image array.
     """
-    img_np = np.frombuffer(content, np.uint8)
+    
+    # in fact, np.unit8 or 16 does not matter
+    img_np = np.frombuffer(content, datatype)
     imread_flags = {'color': cv2.IMREAD_COLOR, 'grayscale': cv2.IMREAD_GRAYSCALE, 'unchanged': cv2.IMREAD_UNCHANGED}
     img = cv2.imdecode(img_np, imread_flags[flag])
     if float32:
-        img = img.astype(np.float32) / 255.
-    return img
+        if(datatype == np.uint8):
+            img = img.astype(np.float32) / 255.
+        else:
+            img = img.astype(np.float32) / 65535.
+    if(flag == 'color'):
+        return img
+    else:
+        return np.expand_dims(img,axis=2)
 
 
 def imwrite(img, file_path, params=None, auto_mkdir=True):
